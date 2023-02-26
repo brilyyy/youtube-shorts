@@ -1,5 +1,5 @@
 [package]
-name = "yshorts"
+name = "youtube-shorts"
 description = "minimal tool for downloading shorts"
 version = "0.1.0"
 authors = ["brilyan.dev"]

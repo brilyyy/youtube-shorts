@@ -12,7 +12,7 @@ fn main() {
         .description(env!("CARGO_PKG_DESCRIPTION"))
         .author(env!("CARGO_PKG_AUTHORS"))
         .version(env!("CARGO_PKG_VERSION"))
-        .usage("yshorts [URL]")
+        .usage("youtube-shorts [URL]")
         .action(default_action);
     app.run(args);
 }
@@ -34,7 +34,7 @@ fn download_video(id: String) {
             let total = cargs.content_length.unwrap();
             let percent = curr * 100 / total;
 
-            println!("Progress: {}/{} ({}%)", curr, total, percent);
+            println!("\rProgress: {}/{} ({}%)", curr, total, percent);
         })
         .connect_on_complete_closure(move |_| {
             println!("Download complete");
@@ -66,7 +66,7 @@ fn get_video_ids(url: &str) -> Result<Vec<String>, Box<dyn Error>> {
     for link in links {
         let at_opts = link.get_attributes()?;
         let attributes = at_opts.as_deref().unwrap();
-        for attr in attributes.last() {
+        while let Some(attr) = attributes.last() {
             if !attr.contains("-1") {
                 video_ids.push(attr.replace("/shorts/", ""));
             }

@@ -2292,7 +2292,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "yshorts"
+name = "youtube-shorts"
 version = "0.1.0"
 dependencies = [
  "headless_chrome",
