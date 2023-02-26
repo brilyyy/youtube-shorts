@@ -1,5 +1,5 @@
 [package]
-name = "youtube-shorts"
+name = "yts"
 description = "minimal tool for downloading shorts"
 version = "0.1.0"
 authors = ["brilyan.dev"]
@@ -9,5 +9,6 @@ edition = "2021"
 
 [dependencies]
 headless_chrome = {git = "https://github.com/atroche/rust-headless-chrome", features = ["fetch"]}
+indicatif = "0.17.3"
 rustube = {version = "0.6.0", features=["blocking", "callback"]}
 seahorse = "2.1"
