@@ -1,31 +1,24 @@
+use clap::Parser;
 use headless_chrome::Browser;
 use rustube::blocking::Video;
 use rustube::Id;
-use seahorse::App;
-use seahorse::Context;
-use std::env;
 use std::error::Error;
-use std::io::stdout;
-use std::io::Write;
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let app = App::new(env!("CARGO_PKG_NAME"))
-        .description(env!("CARGO_PKG_DESCRIPTION"))
-        .author(env!("CARGO_PKG_AUTHORS"))
-        .version(env!("CARGO_PKG_VERSION"))
-        .usage("yts [URL]")
-        .action(default_action);
-    app.run(args);
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// youtube shorts url
+    #[arg(short, long)]
+    url: String,
 }
 
-fn default_action(c: &Context) {
-    if c.args.len() > 0 {
-        let video_ids = get_video_ids(&c.args[0]).unwrap();
-        for id in video_ids {
-            download_video(id);
-        }
-    } else {
+fn main() {
+    let args = Args::parse();
+
+    let video_ids = get_video_ids(&args.url).unwrap();
+
+    for id in video_ids {
+        download_video(id);
     }
 }
 
@@ -37,7 +30,6 @@ fn download_video(id: String) {
             let percent = curr * 100 / total;
 
             println!("\rProgress: {}/{} ({}%)", curr, total, percent);
-            stdout().flush().unwrap();
         })
         .connect_on_complete_closure(move |_| {
             println!("Download complete");
@@ -60,8 +52,12 @@ fn get_video_ids(url: &str) -> Result<Vec<String>, Box<dyn Error>> {
     let tab = browser.new_tab()?;
     tab.navigate_to(url)?;
     tab.wait_until_navigated()?;
-    tab.wait_for_element("ytd-continuation-item-renderer")?
-        .scroll_into_view()?;
+    let ytd_continuation = tab.wait_for_element("ytd-continuation-item-renderer");
+
+    if ytd_continuation.is_ok() {
+        ytd_continuation?.scroll_into_view()?;
+    }
+
     let content_elem = tab.find_element("#contents")?;
 
     let links = content_elem.find_elements_by_xpath("//*[@id=\"thumbnail\"]")?;

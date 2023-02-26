@@ -11,4 +11,4 @@ edition = "2021"
 headless_chrome = {git = "https://github.com/atroche/rust-headless-chrome", features = ["fetch"]}
 indicatif = "0.17.3"
 rustube = {version = "0.6.0", features=["blocking", "callback"]}
-seahorse = "2.1"
+clap = { version = "4.1.6", features = ["derive"] }
